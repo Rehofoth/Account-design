@@ -1,0 +1,203 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Finova personal finance dashboard for tracking income, expenses and budgets.">
+  <title>Finova — Finance Dashboard</title>
+  <link rel="stylesheet" href="style.css">
+  <script src="script.js" defer></script>
+</head>
+<body>
+  <div class="app">
+    <aside class="sidebar" id="sidebar">
+      <a href="#" class="brand">
+        <span class="brand-icon">F</span>
+        <span>finova<span class="brand-dot">.</span></span>
+      </a>
+
+      <p class="nav-label">WORKSPACE</p>
+      <nav class="navigation">
+        <a href="#dashboard" class="nav-link active" data-page="dashboard">▦ <span>Overview</span></a>
+        <a href="#transactions" class="nav-link" data-page="transactions">↕ <span>Transactions</span></a>
+        <a href="#analytics" class="nav-link" data-page="analytics">◒ <span>Analytics</span></a>
+        <a href="#budget" class="nav-link" data-page="budget">◎ <span>Budget planner</span></a>
+      </nav>
+
+      <div class="sidebar-bottom">
+        <div class="tip-card">
+          <span class="tip-icon">✦</span>
+          <h3>Small steps matter.</h3>
+          <p>Track your spending today to understand your habits tomorrow.</p>
+        </div>
+        <button class="nav-link" id="themeToggle">☼ <span>Toggle appearance</span></button>
+        <div class="profile">
+          <div class="avatar">F</div>
+          <div><strong>My Finova</strong><small>Personal workspace</small></div>
+        </div>
+      </div>
+    </aside>
+
+    <main class="main-area">
+      <header class="topbar">
+        <button class="icon-button mobile-menu" id="menuToggle" aria-label="Toggle navigation">☰</button>
+        <div>
+          <p class="eyebrow">PERSONAL FINANCE</p>
+          <h1 id="pageTitle">Overview</h1>
+        </div>
+        <div class="top-actions">
+          <span class="date-chip" id="todayDate"></span>
+          <button class="primary-button" id="addTransaction">＋ Add transaction</button>
+        </div>
+      </header>
+
+      <section class="page active" id="page-dashboard">
+        <div class="welcome">
+          <div>
+            <p class="eyebrow">YOUR MONEY, YOUR CLARITY</p>
+            <h2>Welcome to your financial space.</h2>
+            <p>Here is a snapshot of your money.</p>
+          </div>
+          <div class="welcome-mark">✳</div>
+        </div>
+
+        <div class="stats-grid">
+          <article class="stat-card balance-card">
+            <div class="stat-top"><span>Total balance</span><span class="stat-icon">◈</span></div>
+            <h2 id="totalBalance">₦0.00</h2>
+            <p class="muted">Income minus expenses</p>
+          </article>
+          <article class="stat-card">
+            <div class="stat-top"><span>Total income</span><span class="stat-icon green">↗</span></div>
+            <h2 id="totalIncome">₦0.00</h2>
+            <p class="muted">All recorded income</p>
+          </article>
+          <article class="stat-card">
+            <div class="stat-top"><span>Total expenses</span><span class="stat-icon red">↘</span></div>
+            <h2 id="totalExpenses">₦0.00</h2>
+            <p class="muted">All recorded expenses</p>
+          </article>
+          <article class="stat-card">
+            <div class="stat-top"><span>Monthly spending</span><span class="stat-icon purple">◷</span></div>
+            <h2 id="monthlyExpenses">₦0.00</h2>
+            <p class="muted">Expenses this month</p>
+          </article>
+        </div>
+
+        <div class="dashboard-grid">
+          <article class="panel chart-panel">
+            <div class="panel-heading">
+              <div><h3>Cash flow</h3><p>Income and expenses over the last 6 months</p></div>
+              <span class="live-tag">LIVE DATA</span>
+            </div>
+            <div class="chart-legend">
+              <span><i class="legend-dot income-dot"></i>Income</span>
+              <span><i class="legend-dot expense-dot"></i>Expenses</span>
+            </div>
+            <div class="bar-chart" id="cashFlowChart" aria-label="Six-month income and expenses chart"></div>
+          </article>
+
+          <article class="panel">
+            <div class="panel-heading">
+              <div><h3>Spending breakdown</h3><p>Where your money goes</p></div>
+            </div>
+            <div class="category-chart-wrap">
+              <div class="donut" id="categoryDonut"><div class="donut-center"><strong id="donutTotal">₦0</strong><small>Spent</small></div></div>
+            </div>
+            <div id="categoryLegend" class="category-legend"></div>
+          </article>
+        </div>
+
+        <article class="panel transactions-panel">
+          <div class="panel-heading">
+            <div><h3>Recent transactions</h3><p>Your latest money movements</p></div>
+            <button class="text-button" data-goto="transactions">View all →</button>
+          </div>
+          <div class="table-wrap">
+            <table>
+              <thead><tr><th>Transaction</th><th>Category</th><th>Date</th><th>Amount</th><th>Type</th></tr></thead>
+              <tbody id="recentTransactions"></tbody>
+            </table>
+          </div>
+          <div class="empty-state" id="recentEmpty">
+            <span>◈</span><h3>No transactions yet</h3><p>Add your first transaction to see your dashboard come alive.</p>
+          </div>
+        </article>
+      </section>
+
+      <section class="page" id="page-transactions">
+        <div class="section-intro"><h2>Transactions</h2><p>Keep track of every recorded income and expense.</p></div>
+        <div class="toolbar">
+          <input type="search" id="searchTransactions" placeholder="Search transactions..." aria-label="Search transactions">
+          <select id="filterType" aria-label="Filter transaction type">
+            <option value="all">All types</option><option value="income">Income</option><option value="expense">Expenses</option>
+          </select>
+          <select id="filterCategory" aria-label="Filter category"><option value="all">All categories</option></select>
+          <button class="secondary-button" id="exportCsv">⇩ Export CSV</button>
+        </div>
+        <article class="panel">
+          <div class="table-wrap">
+            <table>
+              <thead><tr><th>Transaction</th><th>Category</th><th>Date</th><th>Amount</th><th>Type</th><th>Actions</th></tr></thead>
+              <tbody id="allTransactions"></tbody>
+            </table>
+          </div>
+          <div class="empty-state" id="transactionsEmpty"><span>⌕</span><h3>No matching transactions</h3><p>Try changing your search or add a transaction.</p></div>
+        </article>
+      </section>
+
+      <section class="page" id="page-analytics">
+        <div class="section-intro"><h2>Your analytics</h2><p>Understand your income and spending patterns.</p></div>
+        <div class="stats-grid analytics-stats">
+          <article class="stat-card"><div class="stat-top"><span>Income this month</span><span class="stat-icon green">↗</span></div><h2 id="analyticsIncome">₦0.00</h2><p class="muted">Current month</p></article>
+          <article class="stat-card"><div class="stat-top"><span>Expenses this month</span><span class="stat-icon red">↘</span></div><h2 id="analyticsExpenses">₦0.00</h2><p class="muted">Current month</p></article>
+          <article class="stat-card"><div class="stat-top"><span>Net cash flow</span><span class="stat-icon purple">⇄</span></div><h2 id="analyticsNet">₦0.00</h2><p class="muted">Income minus expenses</p></article>
+        </div>
+        <div class="dashboard-grid">
+          <article class="panel chart-panel"><div class="panel-heading"><div><h3>Monthly comparison</h3><p>Income versus expenses</p></div></div><div class="bar-chart" id="analyticsChart"></div></article>
+          <article class="panel"><div class="panel-heading"><div><h3>Top spending categories</h3><p>Based on recorded expenses</p></div></div><div id="topCategories" class="top-categories"></div></article>
+        </div>
+      </section>
+
+      <section class="page" id="page-budget">
+        <div class="section-intro"><h2>Budget planner</h2><p>Set a monthly spending limit and keep an eye on your expenses.</p></div>
+        <article class="panel budget-panel">
+          <div class="budget-header"><div><p class="eyebrow">MONTHLY SPENDING LIMIT</p><h2 id="budgetAmountLabel">₦50,000.00</h2></div><span class="budget-icon">◎</span></div>
+          <form id="budgetForm" class="budget-form">
+            <label for="budgetInput">Set your budget (₦)</label>
+            <div class="budget-input-row"><input type="number" id="budgetInput" min="0" step="0.01" placeholder="Enter monthly budget" required><button class="primary-button" type="submit">Save budget</button></div>
+          </form>
+          <div class="budget-progress-info"><span id="budgetSpentLabel">₦0 spent</span><strong id="budgetPercent">0%</strong></div>
+          <div class="progress-track"><div class="progress-fill" id="budgetProgress"></div></div>
+          <p id="budgetMessage" class="muted budget-message">Set a budget to begin tracking your monthly spending.</p>
+        </article>
+        <article class="panel budget-tips"><h3>Smart tracking tips</h3><div class="tips-grid"><div><span>01</span><h4>Record consistently</h4><p>Enter transactions as they happen for a clearer picture.</p></div><div><span>02</span><h4>Review categories</h4><p>Look for patterns in the categories where you spend most.</p></div><div><span>03</span><h4>Adjust your budget</h4><p>Update your limit whenever your plans or circumstances change.</p></div></div></article>
+      </section>
+
+      <footer class="footer"><span>Finova <span class="brand-dot">●</span> Personal Finance</span><span>Your data stays in this browser.</span></footer>
+    </main>
+  </div>
+
+  <div class="modal-backdrop" id="transactionModal" role="dialog" aria-modal="true" aria-labelledby="modalTitle" hidden>
+    <form class="modal" id="transactionForm">
+      <div class="modal-heading"><div><p class="eyebrow">YOUR MONEY</p><h2 id="modalTitle">Add transaction</h2></div><button type="button" class="icon-button" id="closeModal" aria-label="Close dialog">×</button></div>
+      <label for="transactionTitle">Transaction name</label>
+      <input id="transactionTitle" type="text" maxlength="80" placeholder="e.g. Monthly allowance" required>
+      <div class="form-row">
+        <div><label for="transactionAmount">Amount (₦)</label><input id="transactionAmount" type="number" min="0.01" step="0.01" placeholder="0.00" required></div>
+        <div><label for="transactionType">Type</label><select id="transactionType"><option value="expense">Expense</option><option value="income">Income</option></select></div>
+      </div>
+      <div class="form-row">
+        <div><label for="transactionCategory">Category</label><select id="transactionCategory"></select></div>
+        <div><label for="transactionDate">Date</label><input id="transactionDate" type="date" required></div>
+      </div>
+      <label for="transactionNote">Note (optional)</label>
+      <textarea id="transactionNote" rows="2" maxlength="200" placeholder="Add a short note..."></textarea>
+      <div class="modal-actions"><button type="button" class="secondary-button" id="cancelModal">Cancel</button><button type="submit" class="primary-button">Save transaction</button></div>
+    </form>
+  </div>
+
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+</body>
+</html>
